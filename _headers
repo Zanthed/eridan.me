@@ -1,0 +1,19 @@
+/*
+
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+
+Referrer-Policy: no-referrer
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp 
+Cross-Origin-Resource-Policy: same-origin
+Content-Security-Policy: default-src 'none'; script-src 'self' https://ajax.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' https://cdn.jsdelivr.net https://fonts.xz.style; object-src 'none'; base-uri 'none'; connect-src 'none' https://cloudflareinsights.com; font-src 'self' https://fonts.xz.style; form-action 'none'; frame-src 'none'; frame-ancestors 'none'; img-src 'self'; manifest-src 'none'; media-src 'none'; worker-src 'none'; require-trusted-types-for 'script'; upgrade-insecure-requests
+
+Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), clipboard-read=(), clipboard-write=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), sync-xhr=(), usb=(), xr-spatial-tracking=()
+
+Expect-CT: enforce, max-age=63072000
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+Set-Cookie: __Host-preload=1; HttpOnly; Secure; SameSite=Lax; Path=/
+X-DNS-Prefetch-Control: on
