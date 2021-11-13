@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>Sysadmin's Guide to Java Minecraft Server Hosting</title>
+<meta name="title" content="June Army">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="When social media isn't sufficient to get my technical opinions out there.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="June Army">
+<meta property="og:url" content="https://eridan.me/">
+<meta property="og:title" content="June Army">
+<meta property="og:description" content="When social media isn't sufficient to get my technical opinions out there.">
+<meta property="og:image" content="https://eridan.me/static/eridan_ampora1.png">
+<meta property="og:image:type" content="image/png">
+
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://eridan.me/">
+<meta property="twitter:title" content="June Army">
+<meta property="twitter:description" content="When social media isn't sufficient to get my technical opinions out there.">
+<meta property="twitter:image" content="https://eridan.me/static/eridan_ampora1.png">
+
+<meta property="article:author" content="June">
+
+<link rel="icon" href="/static/Sgrub_Logo.png" type="image/png">
+<meta name="author" content="June">
+<link rel="canonical" href="https://eridan.me/">
+<link type="text/plain" rel="author" href="humans.txt">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xz/fonts@1/serve/inter.min.css" integrity="sha512-Rt8UmgkhYTfYqaky5/VGngEuk0a13l+IGjU81CnXfnpo2smVkdlBmCFOdZKOOVZb7iSUxuPL6GZ+KnAeDGE49A==" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.3/new.min.css" integrity="sha512-axYHs+V1FN6qcOMj51TbLkX8v9jJOhOWHrz8h7vKzrXbFDfSITRXRUNCg1ZPaa6gMQIg89pAJ5jFXLkugEynOw==" crossorigin="anonymous">
+</head>
+<body>
+<header id="banner">
+<nav>
+	<a rel="home" href="/"><button>Home</button></a>
+	<a rel="about" href="/about/"><button>About</button></a>
+	<a rel="blog" href="/blog/"><button>Blog</button></a>
+</nav>
+</header>
+
+<main id="content">
+<div itemscope itemtype="https://schema.org/Article">
+<article>
+    <h2>(WIP) Sysadmin's Guide to Java Minecraft Server Hosting</h2>
+    <p>June - 10 November 2021</p>
+    <hr>
+    <section>
+        <blockquote>This article is currently a WIP and things will change at any point in time. Due to the amount of time this is taking to write and research, I have committed it and will update it as I go on.</blockquote>
+       <blockquote><p>Note! If you came here for a "how to optimise my minecraft server" guide, you can leave
+            and find a different article. This article is not how you can optimise it, but rather
+            how you can deploy a server properly, scale it well, and maintain it all while being
+            highly performant and low latency. This is to also teach you inner workings of Java Minecraft to better understand what configuration you should do.</p>
+            <p>This article tries to be somewhat agnostic or generalised, but I may include software-specific things
+            such as configuration files for certain Minecraft server software, operating systems, etc.</p>
+            <p>This article also does not intend to be a "what VPS do I buy". I put down things you should take into consideration and contact a salesperson to discuss about, or set up the infrastructure to. I will not vouch for any provider.</p>
+       </blockquote>
+        <p>Off that note, a lot of people who want to make a Minecraft server don't actually know
+            just how weird it is. It's not hard at all. It is not hard to buy a cheap 60 dollar Raspberry Pi
+            kit off of Amazon, flash Raspbian OS on that poor basic SD card, and use a random frontend script someone
+            made from GitHub. Not hard.
+        </p>
+        <p>Problem is when people want to do a little more than play with their friends, or run some more intensive things,
+            they greatly underestimate or don't realise how resource intensive and complicated it is to make the experience enjoyable.
+            Even something like Redstone requires a bit more power than a Raspberry Pi.
+        </p>
+        <p>"But my server runs fine!" Yeah, packets don't travel that far if your server is on the same network as you are,
+            or how little processing 4 players in the same chunk do. Or this article simply does not apply to you.
+        </p>
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#planning">Planning</a></li>
+            <li><a href="#hardware-and-software">Hardware and Software</a>
+            <ul>
+                <li><a href="#bandwidth-and-networking">Bandwidth and Networking</a></li>
+                <li><a href="#how-vpss-work">How VPS's Work</a></li>
+                <li><a href="#software-threading">Software Threading</a></li>
+                <li><a href="#synchronous-v-asynchronous">Synchronous v. Asynchronous</a></li>
+                <li><a href="#relation-to-java-minecraft">Relation to Java Minecraft</a></li>
+                <li><a href="#relation-to-vpss">Relation to VPS's</a></li>
+                <li><a href="#need-to-buy-more-ram">"Need to buy more RAM!"</a></li>
+                <li><a href="#storage">Storage</a></li>
+                <li><a href="#multi-socket-motherboards-and-numa">Multi-Socket Motherboards and NUMA</a></li>
+            </ul></li>
+            <li><a href="#server-operating-system">Server Operating System</a></li>
+          </ul>
+        <h3 id="planning">Planning</h3>
+        <p><em>You need to figure out who your target audience is.</em> Are you running a simple Vanilla survival server for your friends? Or is it a public survival server that intends to be for everyone to play. Any mods? If so, Fabric or Forge? Or any plugins will be used? What is your target demographic location? Is it east coast? Or west coast? Or your entire country? Are they in the same state as you? Do you have IPv4 only? IPv6 only? Or both!</p>
+        <p>Is this a simple LAN server? A public server? Is there a whitelist or not?</p>
+        <blockquote><em>(Note: This list of questions are arbitrarily picked out and you need to figure out what questions, listed here or not, are relevant to you.)</em></blockquote>
+        <p>These questions are all pertinent that require answers to determine things like your security model, optimise networking for LAN or WAN, and general configuration to make the server accessible.</p>
+        <p>For example, you may want to make a public survival server for not just your friends, but they may be the most active players on 80% of the time. Your friends are also in the same state as you. Self hosting <strong>may</strong> be an option with a higher security model in mind.</p>
+
+        <h3 id="hardware-and-software">Hardware and Software</h3>
+
+        <h4 id="bandwidth-and-networking">Bandwidth and Network</h4>
+        <p>Support IPv6. Please. It is absolutely not considered experimental and we are recycling IPv4 addresses which has shown <a target="_blank" href="https://twitter.com/DanielMicay/status/1420722551064567810?s=20">adverse</a> <a target="_blank" href="https://twitter.com/DanielMicay/status/1420848307673436166">affects</a> to servers. IPv6 has mandatory IPSec  and does not (and you shouldn't) need Network Address Translation. Modern versions of Minecraft support IPv6 just fine. (<a target="_blank" href="https://twitter.com/noIPv6">Laugh at the people who refuse to implement IPv6 or applaud anyone who has added support for IPv6.</a>)</p>
+        <p>Depending on who your target audience is, high bandwidth may not be necessary, but it is always desirable no matter the circumstances to have low latency. Latency is a far worse thing to play against than speed. Minecraft doesn't need a lot of bandwidth for a few players, but I personally suggest anything at least 200Mbps (upload).</p>
+        <p>To combat latency, strictly avoid copper-heavy infrastructures. Don't use incredibly long cables. Standard Ethernet cables are copper, but the travel distance is very minimal compared to entire ISP infrastructures that are copper. Get fibre, no questions asked. Make sure it's Fibre to the Home or Building. Fibre to the Neighborhood/Node is still fibre, however you're routed with copper to that fibre node which helps with download speeds, but upload speeds and latency will suffer badly still. Charter Communications is a common offender of this and cap you at best 65Mbps upload even when paying for their gigabit plan, which is an awfully low amount of upload speed.</p>
+        <p>Routers are a real pain. Networks are not trustworthy at all, or secure in any way, and replacing your old router with garbage, bloated, and insecure firmwares like DD-WRT/OpenWrt or OPNsense does not improve security at all. You'd want a HardenedBSD router with aarch64 and even then networks are still by design fundamentally insecure and clients should distrust it at all costs. Routers fail to implement security features like verified/measured boot, disk encryption, security kernel modules, rollback protection, common exploit mitigations, or have any form of hardware security module (HSM) to make any of this even useful or possible. While you can build your own router and firewall and theoretically implement all of this yourself, it's highly non-trivial and people severely underestimate the amount of work this would take.</p>
+        <p>From a performance standpoint, routers still fail horribly. Unless you use Broadcom chipsets with the proprietary blobs or Intel chipsets, very few other chipsets match performance similar to those two. Open source implementations of Broadcom exist, but they're very lackluster in features like enterprise WPA2 and incredibly slow in performance due to lack of hardware acceleration. Intel has developed official open source drivers. Realtek is a particularly buggy and inconsistent chipset from both the hardware and software side. FreeBSD barely supports it, and even then your speeds are really flakey.</p>
+
+        <blockquote>The next few sections will talk about software threading and synchrony.</blockquote>
+
+        <h5 id="how-vpss-work">How VPS's work</h5>
+        <p>VPS's are shared hosting. It should be obvious you are not going to get a dedicated server with purely physical hardware just for you unless you purchase <em>a dedicated server</em> specifically. That's expensive for both the provider and you. To make room for everyone, providers give you shared resources through virtualisation and a (usually type 1) hypervisor; also usually Linux KVM and scripting QEMU or another KVM frontend, and UEFI being TianoCore EDK II. You have multiple people on one processor and even multiple people on the same physical core as you. Server load can determine how much power is available to you dynamically. If the servers are overloaded, your performance will suffer. If servers are not overloaded, you have more headroom.</p>
+
+        <h5 id="software-threading">Software Threading</h5>
+        <p>Software executes code usually using both multi-threaded and single-threaded mechanisms. Threading is all about workers. Who is doing what? The term "thread" here is not how many cores your processor has. A thread is the stream of execution and execution context. Single-threading uses just one of those. It's how all functions are executed by default; call a function, does a thing, returns a thing. Simple. </p>
+        <p>Multi-threaded software execute code using multiple execution contexts, or threads. You do a thing, do another thing, and another thing all at the same time. In some cases, this can be a bit risky, what is known as not thread-safe, if you are doing this to do more work like trying to render things.</p>
+
+        <h5 id="synchronous-v-asynchronous">Synchronous v. Asynchronous</h5>
+        <p>Now in functions, you obviously do stuff in them. Since threading is a stream of execution, a program executes stuff in a sequential manner by default. This is where synchronous and asynchronous come in. Contrary to popular teaching: synchronous, asynchronous, single-threaded, and multi-threaded are NOT at all the same. Synchrony and asynchrony are all about tasks.</p>
+        <p>Synchronous executes stuff in a specific sequence and a function is supposed to finish  before doing the next thing. This is not the same as single-threaded because you can execute synchronous things with multiple threads. A common example is before HTTP/2, it was a synchronous request/reply system.</p>
+        <p>Asynchronous, on the other hand, let's you do a thing and it does not block the flow of execution. You can execute asynchronous tasks under a single thread. HTTP/2 is asynchronous as it uses multiplexing and any resources that failed to load do not block loading the website.</p>
+        <p>The real difficulty is when you do <em>asynchronous multi-threading</em>. You now have multiple workers doing multiple tasks all at the same time. You need to implement measures to make sure they don't interfere or access a resource already in use (mutex locking and unlocking), deadlocks, and race conditions. But if all done correctly, an intensive task can be done significantly faster.</p>
+        <p>See these <a target="_blank" href="https://stackoverflow.com/a/34681101">great Stackoverflow</a> answers on <a target="_blank" href="https://stackoverflow.com/a/5201906">threading</a> and synchrony.</p>
+        <h5 id="relation-to-java-minecraft">Relation to Java Minecraft</h5>
+        <p>Before getting to the VPS part, let's wrap it up by explaining how this ties in with Java Minecraft.</p>
+        <p>You're probably familiar with the infamous never-ending losing war of how terribly unoptimised chunk rendering and chunk generation is in Minecraft. There are plenty more examples, but these two have been problems since day-one. Minecraft heavily relies on single-threaded synchronous operations, being on the main thread. Even as of 1.17, Minecraft is still extremely single-threaded reliant even on chunk operations. There are some multi-threaded or asynchronous operations like disk I/O and <a target="_blank" href="https://www.spigotmc.org/wiki/spigot-configuration/#main-ungrouped-settings">Netty supporting multiple threads</a>. But even then, async and multi-threading are not magic performance changers or black or white if there are <a target="_blank" href="https://www.spigotmc.org/threads/random-lags-spikes-due-to-minecraft-tickentity-villager-tick.474879/">many</a> <a target="_blank" href="https://www.reddit.com/r/admincraft/comments/d10doc/consistently_getting_cant_keep_up_is_server/">other</a> <a target="_blank" href="https://github.com/PaperMC/Paper/issues/4941#issuecomment-751319040">problems</a>. <a target="_blank" href="https://www.reddit.com/r/Minecraft/comments/xfzdg/comment/c5m0llw/">Notch admits Java not being the fastest.</a></p>
+        <p>It is so difficult to implement asynchronous execution on many things on Java Minecraft, that even <a target="_blank" href="https://github.com/PaperMC/Paper/issues/748#issuecomment-308866239">PaperMC</a> <a target="_blank" href="https://github.com/PaperMC/Paper/issues/5364">developers</a> have made jokes about it or repeat themselves because it's not magic, black or white, or <a target="_blank" href="https://github.com/PaperMC/Paper/issues/4791#issuecomment-731617386">trivial</a> to <a target="_blank" href="https://github.com/PaperMC/Paper/issues/6554#issuecomment-912665552">implement</a>. Asynchronous tasks for Minecraft will forever be experimental, no matter how much people push for it and promote new "revelations in async technology". You need to focus on solving other problems with your setup instead of telling yourself async is a magic bullet. </p>
+        <h4 id="relation-to-vpss">Relation to VPS's</h4>
+        <p>So, it's safe to say you need high single-core performance to compensate for the poor programming, and you definitely don't want a shared vCPU. Providers may offer what is known as "dedicated CPU usage" or just a dedicated CPU. You still have a virtual machine given to you, but you are given a dedicated CPU core(s) that are not shared. These are going to be your best bet for high core performance, even on multi-threaded operations for things like your operating system. No one else is on these cores, but you. For Minecraft, it's suggested at least 2 or 4 dedicated cores. They may cost a tad bit, but not as crazy as buying a full dedicated server.</p>
+        <h4 id="need-to-buy-more-ram">"Need to buy more RAM!"</h4>
+        <p>You're not wrong. Java Minecraft is extremely needy of memory, no matter what it is you are doing. Aikar, a PaperMC developer, stresses the importance of <a target="_blank" href="https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/">using 6-10GB of memory <strong>minimum</strong>, no matter how many players you have</a> or what you're doing to give plenty of head room for the GC. Unfortunately, RAM has turned into a marketing term for Minecraft server hosting. Providers love stressing about how they have so much memory and charge at either too cheap prices or too high prices, and all still have poor quality because they miss more key things as I have mentioned before relating to processing power and load. Stay away from Minecraft server hosting providers, but you will definitely need a lot of memory here. Make sure you leave headroom memory for the operating system too, something people easily forget.</p>
+        <p>Error correction code memory (ECC) DIMMs are hardware memory modules (DIMMs) that attempt to correct any memory errors that may occur, such as cosmic bit flipping or other non-deterministic sources of memory interference, especially on the cells. ECC can mitigate row hammer bitflips on the DIMMs as well. Because of how memory intensive Minecraft is and to avoid unexplainable weird errors that may be caused by it, try to consider it when possible as it's <a target="_blank" href="https://blogs.oracle.com/linux/post/attack-of-the-cosmic-rays">not</a> <a target="_blank" href="http://lambda-diode.com/opinion/ecc-memory-2">totally</a> <a target="_blank" href="https://stackoverflow.com/questions/2580933/cosmic-rays-what-is-the-probability-they-will-affect-a-program">far</a> <a target="_blank" href="https://arstechnica.com/gadgets/2021/03/windows-com-bitsquatting-hack-can-wreak-unknown-havoc-on-pcs/">fetched</a>.</p>
+        <h4 id="storage">Storage</h4>
+        <p>Just buy NVMe. Please. Though SATA <a target="_blank" href="https://ioflood.com/blog/2016/02/22/what-is-raid-10-nested-raid-levels-explained/">RAID <em>10</em></a> can provide improved performance and data integrity compared to typical SATA if you cannot get NVMe. Make sure you do <strong>not</strong> purchase DRAMless SSDs. They are not useless, but in a server environment their purpose is out of their league here. Especially as you start to fill up the SSD and the performance boggles down to even slower than 7200 RPM HDDs because lack of DRAM cache.</p>
+        <h4 id="multi-socket-motherboards-and-numa">Multi-Socket Motherboards and NUMA</h4>
+        <p>Multi-socket, typically dual-socket, motherboards are not black/white. They don't magically "team" together to do processing. Non-uniform memory access (NUMA) is used to achieve this. NUMA requires a fair bit of configuration and may be a learning curve for some people. Software needs to be NUMA aware (Java supports this with the <code>-XX:+UseNUMA</code> flag) and thread affinity is necessary for resource management and delegation to make the fullest extent of performance possible with multiple processors and keep latency low. If you do happen to understand NUMA very well and know how to set it all up correctly, it would definitely yield great results.</p>
+        <h3 id="server-operating-system">Server Operating System</h3>
+        <p>If you purchased a full dedicated server or have the hardware for, I suggest looking into Windows Server and Hyper-V with Arch Linux as the guest. Hyper-V features <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/manage/manage-hyper-v-scheduler-types">core scheduling</a> for SMT to decide on improved performance or stricter guest isolation, <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/plan/should-i-create-a-generation-1-or-2-virtual-machine-in-hyper-v#whats-the-difference-in-device-support">Generation 2</a> VMs support larger drives, <a target="_blank" href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831446(v=ws.11)">safer disk images with VHDX (and higher performance!)</a>, safer and easier migration and backups, and <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/plan/should-i-create-a-generation-1-or-2-virtual-machine-in-hyper-v#whats-the-difference-in-device-support">less legacy code or hardware used</a>. SR-IOV compatible network adapters are easily supported too.</p>
+        <p>If you don't have a dedicated server, consider Arch Linux as your OS. Avoid package freezing or "stable" distro release models due to issues such as <a target="_blank" href="https://madaidans-insecurities.github.io/linux.html#distro-specific-issues">downstream kernels, package freezing, failure to keep up with security patches on both their software and the kernel, unnecessary downstream patching</a>, lots of <a target="_blank" href="https://twitter.com/DanielMicay/status/1446261106943709185?s=20">unnecessary post-install scripts</a> that are prone to breakage and actually confuse the user, <a target="_blank" href="https://www.debian.org/security/#DSAS">having to deviate from using CVEs and use your own vulnerability ID system</a>, and many more. Debian, Manjaro, Ubuntu, and RHEL are well-known offenders here, Debian being the absolute worst.</p>
+        <p>Rolling release is not precisely that "unstable". A lot of instability is from trying to do too many things with one single host, or from over-using the AUR or other "non-typical" ways of obtaining software like maintaining a bunch of tarballs and keeping up to date and compatibility. Downstream package-freezing distros are a lot more prone to breakage than rolling because of downstream patching and developers maintaining new downstream codebases. When errors occur, upstream solutions don't work or they're not even an upstream issue in the first place.</p>
+        <p>For Arch Linux and general Linux security advice and a hardening guide, refer to <a target="_blank" href="https://madaidans-insecurities.github.io/guides/linux-hardening.html">madaidan's Linux Hardening guide</a>. (<a target="_blank" href="https://madaidans-insecurities.github.io/linux.html">Linux is not a secure operating system</a>.)</p>
+        <p>Linux may be generally preferred though as they natively support NIC teaming/bonding and configuration for 802.3ad to improve network stability and throughput. <a target="_blank" href="https://wiki.archlinux.org/title/Systemd-networkd#Bonding_a_wired_and_wireless_interface">Systemd-networkd</a> provides easy configuration frontend to use this. Windows does not natively support bonding and requires usage of vendor software like Intel ANS teaming.</p>
+    </section>
+</article>
+</div>
+
+</main>
+<hr>
+<footer id="site-footer">
+<p>
+© 2021 June | <a target="_blank" href="https://github.com/Zanthed/eridan.me">Website Source</a>
+</p>
+</footer>
+</body>
+</html>
