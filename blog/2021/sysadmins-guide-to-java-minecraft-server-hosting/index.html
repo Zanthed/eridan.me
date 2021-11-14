@@ -9,24 +9,30 @@
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="June Army">
-<meta property="og:url" content="https://eridan.me/">
+<meta property="og:url" content="https://eridan.me/blog/2021/sysadmins-guide-to-java-minecraft-server-hosting/">
 <meta property="og:title" content="June Army">
 <meta property="og:description" content="When social media isn't sufficient to get my technical opinions out there.">
 <meta property="og:image" content="https://eridan.me/static/eridan_ampora1.png">
 <meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="Eridan Ampora">
 
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://eridan.me/">
-<meta property="twitter:title" content="June Army">
-<meta property="twitter:description" content="When social media isn't sufficient to get my technical opinions out there.">
-<meta property="twitter:image" content="https://eridan.me/static/eridan_ampora1.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:url" content="https://eridan.me/blog/2021/sysadmins-guide-to-java-minecraft-server-hosting/">
+<meta name="twitter:title" content="June Army">
+<meta name="twitter:description" content="When social media isn't sufficient to get my technical opinions out there.">
+<meta name="twitter:image" content="https://eridan.me/static/eridan_ampora1.png">
+<meta name="twitter:creator" content="@ZanthedNT">
+<meta name="twitter:site" content="@ZanthedNT">
 
 <meta property="article:author" content="June">
 
 <link rel="icon" href="/static/Sgrub_Logo.png" type="image/png">
 <meta name="author" content="June">
-<link rel="canonical" href="https://eridan.me/">
-<link type="text/plain" rel="author" href="humans.txt">
+<link rel="canonical" href="https://eridan.me/blog/2021/sysadmins-guide-to-java-minecraft-server-hosting/">
+<link type="text/plain" rel="author" href="/humans.txt">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="license" href="/LICENCE.txt">
+
 
 <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xz/fonts@1/serve/inter.min.css">
 <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.3/new.min.css">
@@ -85,7 +91,7 @@
                 <li><a href="#storage">Storage</a></li>
                 <li><a href="#multi-socket-motherboards-and-numa">Multi-Socket Motherboards and NUMA</a></li>
             </ul></li>
-            <li><a href="#server-operating-system">Server Operating System</a></li>
+            <li><a href="#server-operating-systems">Server Operating Systems</a></li>
           </ul>
         <h3 id="planning">Planning</h3>
         <p><em>You need to figure out who your target audience is.</em> Are you running a simple Vanilla survival server for your friends? Or is it a public survival server that intends to be for everyone to play. Any mods? If so, Fabric or Forge? Or any plugins will be used? What is your target demographic location? Is it east coast? Or west coast? Or your entire country? Are they in the same state as you? Do you have IPv4 only? IPv6 only? Or both!</p>
@@ -103,6 +109,8 @@
         <p>Routers are a real pain. Networks are not trustworthy at all, or secure in any way, and replacing your old router with garbage, bloated, and insecure firmwares like DD-WRT/OpenWrt or OPNsense does not improve security at all. You'd want a HardenedBSD router with aarch64 and even then networks are still by design fundamentally insecure and clients should distrust it at all costs. Routers fail to implement security features like verified/measured boot, disk encryption, security kernel modules, rollback protection, common exploit mitigations, or have any form of hardware security module (HSM) to make any of this even useful or possible. While you can build your own router and firewall and theoretically implement all of this yourself, it's highly non-trivial and people severely underestimate the amount of work this would take.</p>
         <p>From a performance standpoint, routers still fail horribly. Unless you use Broadcom chipsets with the proprietary blobs or Intel chipsets, very few other chipsets match performance similar to those two. Open source implementations of Broadcom exist, but they're very lackluster in features like enterprise WPA2 and incredibly slow in performance due to lack of hardware acceleration. Intel has developed official open source drivers. Realtek is a particularly buggy and inconsistent chipset from both the hardware and software side. FreeBSD barely supports it, and even then your speeds are really flakey.</p>
 
+        <p>In the <a href="#server-operating-systems">Server Operating Systems</a> section, I talk about NIC bonding/teaming with schedulers like 802.3ad (link aggregation) and round-robin.</p>
+
         <blockquote>The next few sections will talk about software threading and synchrony.</blockquote>
 
         <h5 id="how-vpss-work">How VPS's work</h5>
@@ -110,7 +118,7 @@
 
         <h5 id="software-threading">Software Threading</h5>
         <p>Software executes code usually using both multi-threaded and single-threaded mechanisms. Threading is all about workers. Who is doing what? The term "thread" here is not how many cores your processor has. A thread is the stream of execution and execution context. Single-threading uses just one of those. It's how all functions are executed by default; call a function, does a thing, returns a thing. Simple. </p>
-        <p>Multi-threaded software execute code using multiple execution contexts, or threads. You do a thing, do another thing, and another thing all at the same time. In some cases, this can be a bit risky, what is known as not thread-safe, if you are doing this to do more work like trying to render things.</p>
+        <p>Multi-threaded software execute code using multiple execution contexts, or threads. You do a thing, do another thing, and another thing all at the same time. In some cases, this can be a bit risky, what is known as not thread-safe, if you are doing this to do more work like trying to render things and the drawing process was made to draw in a sequential manner.</p>
 
         <h5 id="synchronous-v-asynchronous">Synchronous v. Asynchronous</h5>
         <p>Now in functions, you obviously do stuff in them. Since threading is a stream of execution, a program executes stuff in a sequential manner by default. This is where synchronous and asynchronous come in. Contrary to popular teaching: synchronous, asynchronous, single-threaded, and multi-threaded are NOT at all the same. Synchrony and asynchrony are all about tasks.</p>
@@ -131,12 +139,15 @@
         <p>Just buy NVMe. Please. Though SATA <a target="_blank" href="https://ioflood.com/blog/2016/02/22/what-is-raid-10-nested-raid-levels-explained/">RAID <em>10</em></a> can provide improved performance and data integrity compared to typical SATA if you cannot get NVMe. Make sure you do <strong>not</strong> purchase DRAMless SSDs. They are not useless, but in a server environment their purpose is out of their league here. Especially as you start to fill up the SSD and the performance boggles down to even slower than 7200 RPM HDDs because lack of DRAM cache.</p>
         <h4 id="multi-socket-motherboards-and-numa">Multi-Socket Motherboards and NUMA</h4>
         <p>Multi-socket, typically dual-socket, motherboards are not black/white. They don't magically "team" together to do processing. Non-uniform memory access (NUMA) is used to achieve this. NUMA requires a fair bit of configuration and may be a learning curve for some people. Software needs to be NUMA aware (Java supports this with the <code>-XX:+UseNUMA</code> flag) and thread affinity is necessary for resource management and delegation to make the fullest extent of performance possible with multiple processors and keep latency low (some software can handle this itself by making it NUMA aware). If you do happen to understand NUMA very well and know how to set it all up correctly, it would definitely yield great results <a target="_blank" href="https://stackoverflow.com/a/62274149">only on newer Java versions</a>.</p>
-        <h3 id="server-operating-system">Server Operating System</h3>
-        <p>If you purchased a full dedicated server or have the hardware for, I suggest looking into Windows Server and Hyper-V with Arch Linux as the guest. Hyper-V features <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/manage/manage-hyper-v-scheduler-types">core scheduling</a> for SMT to decide on improved performance or stricter guest isolation, <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/plan/should-i-create-a-generation-1-or-2-virtual-machine-in-hyper-v#whats-the-difference-in-device-support">Generation 2</a> VMs support larger drives, <a target="_blank" href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831446(v=ws.11)">safer disk images with VHDX (and higher performance!)</a>, safer and easier migration and backups, and <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/plan/should-i-create-a-generation-1-or-2-virtual-machine-in-hyper-v#whats-the-difference-in-device-support">less legacy code or hardware used</a>. SR-IOV compatible network adapters are easily supported too.</p>
+        <h3 id="server-operating-systems">Server Operating Systems</h3>
+        <p>If you purchased a full dedicated server or have the hardware for, I suggest looking into Windows Server and Hyper-V with Arch Linux as the guest. Hyper-V features <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/manage/manage-hyper-v-scheduler-types">core scheduling</a> for SMT to decide on improved performance or stricter guest isolation, <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/plan/should-i-create-a-generation-1-or-2-virtual-machine-in-hyper-v#whats-the-difference-in-device-support">Generation 2</a> VMs support larger drives, <a target="_blank" href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831446(v=ws.11)">safer disk images with VHDX (and higher performance!)</a>, safer and easier migration and backups, and <a target="_blank" href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/plan/should-i-create-a-generation-1-or-2-virtual-machine-in-hyper-v#whats-the-difference-in-device-support">less legacy code or hardware used</a>. SR-IOV compatible network adapters are natively supported by Hyper-V.</p>
+        <p>Avoid Virtualbox at all costs. It has very weak guest isolation due to the bloat/absurd <a target="_blank" href="https://conference.hitb.org/hitbsecconf2021ams/sessions/hack-out-of-the-box-discovering-10-vulnerabilities-in-virtualbox/">amount of guest-host features</a>, a <a target="_blank" href="https://secret.club/2021/01/14/vbox-escape.html">terrible security</a> <a target="_blank" href="https://starlabs.sg/advisories/19-2722/">track record</a>, <a target="_blank" href="https://github.com/MorteNoir1/virtualbox_e1000_0day">poor security</a> <a target="_blank" href="https://news.ycombinator.com/item?id=18395855">researcher communication</a>, and is only a type-2 hypervisor.</p>
         <p>If you don't have a dedicated server, consider Arch Linux as your OS. Avoid package freezing or "stable" distro release models due to issues such as <a target="_blank" href="https://madaidans-insecurities.github.io/linux.html#distro-specific-issues">downstream kernels, package freezing, failure to keep up with security patches on both their software and the kernel, unnecessary downstream patching</a>, lots of <a target="_blank" href="https://twitter.com/DanielMicay/status/1446261106943709185?s=20">unnecessary post-install scripts</a> that are prone to breakage and actually confuse the user, <a target="_blank" href="https://www.debian.org/security/#DSAS">having to deviate from using CVEs and use your own vulnerability ID system</a>, and many more. Debian, Manjaro, Ubuntu, and RHEL are well-known offenders here, Debian being the absolute worst.</p>
         <p>Rolling release is not precisely that "unstable". A lot of instability is from trying to do too many things with one single host, or from over-using the AUR or other "non-typical" ways of obtaining software like maintaining a bunch of tarballs and keeping up to date and compatibility. Downstream package-freezing distros are a lot more prone to breakage than rolling because of downstream patching and developers maintaining new downstream codebases. When errors occur, upstream solutions don't work or they're not even an upstream issue in the first place.</p>
         <p>For Arch Linux and general Linux security advice and a hardening guide, refer to <a target="_blank" href="https://madaidans-insecurities.github.io/guides/linux-hardening.html">madaidan's Linux Hardening guide</a>. (<a target="_blank" href="https://madaidans-insecurities.github.io/linux.html">Linux is not a secure operating system</a>.)</p>
-        <p>Linux may be generally preferred though as they natively support NIC teaming/bonding and configuration for 802.3ad to improve network stability and throughput. <a target="_blank" href="https://wiki.archlinux.org/title/Systemd-networkd#Bonding_a_wired_and_wireless_interface">Systemd-networkd</a> provides easy configuration frontend to use this. Windows does not natively support bonding and requires usage of vendor software like Intel ANS teaming.</p>
+        <p>Linux may be generally preferred though as the <a target="_blank" href="https://www.kernel.org/doc/html/latest/networking/bonding.html">kernel natively supports NIC teaming/bonding</a> and configuration for 802.3ad (link aggregation) to improve network stability and throughput or round-robin for load balancing. To get the fullest improvements of using 802.3ad, you need hardware (switch and NICs) compatible with it, otherwise your LACP Rate may be set to slow instead of full. A slow LACP Rate means one LACPDU (LACP Data Unit, basically a LACP packet) <a target="_blank" href="https://access.redhat.com/discussions/4389891">is sent every 30 seconds, where as fast is one LACPDU every second</a>. This doesn't mean your speeds are slower, it's just the effectiveness of link aggregation here isn't as boosted compared to normal. <a target="_blank" href="https://wiki.archlinux.org/title/Systemd-networkd#Bonding_a_wired_and_wireless_interface">systemd-networkd</a> provides easy configuration frontend to use this. Windows does not natively support bonding and requires usage of vendor software like Intel ANS teaming.</p>
+        <p>systemd, <a target="_blank" href="https://ewontfix.com/14/">despite being massively bloated and has a lot of attack surface</a>, supports granular service <a target="_blank" href="https://madaidans-insecurities.github.io/guides/linux-hardening.html#sandboxing">sandboxing through unit files</a>. This can assist in isolating and sandboxing your server, which you should do. Solutions <a target="_blank" href="https://madaidans-insecurities.github.io/linux.html#firejail">like</a> <a target="_blank" href="https://forums.whonix.org/t/tor-browser-hardening-hardened-malloc-firejail-apparmor-vs-web-fingerprint/7851/54">firejail</a> <a target="_blank" href="https://www.whonix.org/wiki/Dev/Firejail#Status_of_Firejail_in_Whonix_.E2.84.A2">are</a> <a target="_blank" href="https://www.whonix.org/wiki/Dev/Firejail#Security">quite</a> <a target="_blank" href="https://github.com/containers/bubblewrap/issues/266#issuecomment-386867656">questionable</a>. <a target="_blank" href="https://madaidans-insecurities.github.io/guides/linux-hardening.html#application-sandboxing">bubblewrap</a> is the best so far, but it's not too user-friendly and needs manual configuration. It's also essentially necessary to combine it with syscall filtering using seccomp rather than just bubblewrap only and mandatory access control (MAC) like AppArmor or SELinux, but both also require manual configuration and setting up a strict MAC is extremely tedious due to desktop/server software being written with an outdated 90s security model.</p>
+        <p></p>
     </section>
 </article>
 </div>
