@@ -1,3 +1,2 @@
 User-agent: *
 Sitemap: https://eridan.me/sitemap.xml
-Disallow: 
