@@ -1,55 +1,16 @@
-/*.png
-Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-X-Content-Type-Options: nosniff
-Cache-Control: public, max-age=31536000
-Referrer-Policy: no-referrer
-Cross-Origin-Opener-Policy: same-origin
-Cross-Origin-Embedder-Policy: require-corp 
-Cross-Origin-Resource-Policy: cross-origin
-Content-Security-Policy: default-src 'none'; script-src 'none'; style-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'none'; font-src 'self'; form-action 'none'; frame-src 'none'; frame-ancestors 'none'; img-src 'self'; manifest-src 'self'; media-src 'none'; worker-src 'none'; require-trusted-types-for 'script'; trusted-types 'none'; upgrade-insecure-requests
-Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), clipboard-read=(), clipboard-write=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), hid=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), speaker-selection=(), serial=(), sync-xhr=(), usb=(), xr-spatial-tracking=()
-Expect-CT: enforce, max-age=63072000
-X-Frame-Options: DENY
-X-XSS-Protection: 1; mode=block
-Link: <https://eridan.me/static/style.css>; rel="preload"; as="style"; nopush; integrity="sha256-bCF3QR5uhl1dLKjpAniWxMewkvLR0/FvIxRQ7FlA1ys="
-X-DNS-Prefetch-Control: on
-
-/*.css
-Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-X-Content-Type-Options: nosniff
-Cache-Control: public, max-age=31536000, immutable
-Referrer-Policy: no-referrer
-Cross-Origin-Opener-Policy: same-origin
-Cross-Origin-Embedder-Policy: require-corp 
-Cross-Origin-Resource-Policy: same-origin
-Content-Security-Policy: default-src 'none'; script-src 'none'; style-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'none'; font-src 'self'; form-action 'none'; frame-src 'none'; frame-ancestors 'none'; img-src 'self'; manifest-src 'self'; media-src 'none'; worker-src 'none'; require-trusted-types-for 'script'; trusted-types 'none'; upgrade-insecure-requests
-Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), clipboard-read=(), clipboard-write=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), hid=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), speaker-selection=(), serial=(), sync-xhr=(), usb=(), xr-spatial-tracking=()
-Expect-CT: enforce, max-age=63072000
-X-Frame-Options: DENY
-X-XSS-Protection: 1; mode=block
-Set-Cookie: __Host-preload=1; HttpOnly; Secure; SameSite=Lax; Path=/
-Link: <https://eridan.me/static/style.css>; rel="preload"; as="style"; nopush; integrity="sha256-bCF3QR5uhl1dLKjpAniWxMewkvLR0/FvIxRQ7FlA1ys="
-X-DNS-Prefetch-Control: on
-
 /*
-
-Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-X-Content-Type-Options: nosniff
-
-Cache-Control: public, no-cache
-
-Referrer-Policy: no-referrer
-Cross-Origin-Opener-Policy: same-origin
-Cross-Origin-Embedder-Policy: require-corp 
-Cross-Origin-Resource-Policy: same-origin
-Content-Security-Policy: default-src 'none'; script-src 'none'; style-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'none'; font-src 'self'; form-action 'none'; frame-src 'none'; frame-ancestors 'none'; img-src 'self'; manifest-src 'self'; media-src 'none'; worker-src 'none'; require-trusted-types-for 'script'; trusted-types 'none'; upgrade-insecure-requests
-
-Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), clipboard-read=(), clipboard-write=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), hid=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), speaker-selection=(), serial=(), sync-xhr=(), usb=(), xr-spatial-tracking=()
-
-Expect-CT: enforce, max-age=63072000
-X-Frame-Options: DENY
-X-XSS-Protection: 1; mode=block
-
-Set-Cookie: __Host-preload=1; HttpOnly; Secure; SameSite=Lax; Path=/
-Link: <https://eridan.me/static/style.css>; rel="preload"; as="style"; nopush; integrity="sha256-bCF3QR5uhl1dLKjpAniWxMewkvLR0/FvIxRQ7FlA1ys="
-X-DNS-Prefetch-Control: on
+	Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+	X-Content-Type-Options: nosniff
+	Cache-Control: public
+	Referrer-Policy: no-referrer
+	Cross-Origin-Opener-Policy: same-origin
+	Cross-Origin-Embedder-Policy: require-corp 
+	Cross-Origin-Resource-Policy: same-origin
+	Content-Security-Policy: default-src 'none'; script-src 'none'; style-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'none'; font-src 'self'; form-action 'none'; frame-src 'none'; frame-ancestors 'none'; img-src 'self'; manifest-src 'self'; media-src 'none'; worker-src 'none'; require-trusted-types-for 'script'; trusted-types 'none'; upgrade-insecure-requests
+	Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), clipboard-read=(), clipboard-write=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), hid=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), speaker-selection=(), serial=(), sync-xhr=(), usb=(), xr-spatial-tracking=()
+	Expect-CT: enforce, max-age=63072000
+	X-Frame-Options: DENY
+	X-XSS-Protection: 1; mode=block
+	Set-Cookie: __Host-preload=1; HttpOnly; Secure; SameSite=Lax; Path=/
+	Link: <https://eridan.me/static/style.css>; rel="preload"; as="style"; nopush; integrity="sha256-bCF3QR5uhl1dLKjpAniWxMewkvLR0/FvIxRQ7FlA1ys="
+	X-DNS-Prefetch-Control: on
