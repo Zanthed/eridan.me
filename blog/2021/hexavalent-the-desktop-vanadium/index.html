@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>Hexavalent: The Desktop "Vanadium"</title>
+<meta name="title" content="Hexavalent: The Desktop 'Vanadium'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="When social media isn't sufficient to get my technical opinions out there.">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#970e57">
+<meta name="msapplication-TileColor" content="#970e57">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hexavalent: The Desktop 'Vanadium'">
+<meta property="og:url" content="https://eridan.me/blog/2021/hexavalent-the-desktop-vanadium/">
+<meta property="og:title" content="Hexavalent: The Desktop 'Vanadium'">
+<meta property="og:description" content="When social media isn't sufficient to get my technical opinions out there.">
+<meta property="og:image" content="https://eridan.me/static/eridan_ampora1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="Eridan Ampora">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:url" content="https://eridan.me/blog/2021/hexavalent-the-desktop-vanadium/">
+<meta name="twitter:title" content="Hexavalent: The Desktop 'Vanadium'">
+<meta name="twitter:description" content="When social media isn't sufficient to get my technical opinions out there.">
+<meta name="twitter:image" content="https://eridan.me/static/eridan_ampora1.png">
+<meta name="twitter:creator" content="@ZanthedNT">
+<meta name="twitter:site" content="@ZanthedNT">
+
+<meta property="article:author" content="June">
+
+<link rel="icon" href="/static/Sgrub_Logo.png" type="image/png">
+<meta name="author" content="June">
+<link rel="canonical" href="https://eridan.me/blog/2021/hexavalent-the-desktop-vanadium/">
+<link type="text/plain" rel="author" href="/humans.txt">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="license" href="/LICENCE.txt">
+
+<link rel="preload" as="style" type="text/css" href="/static/style.css">
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
+<header id="banner">
+<nav>
+	<a rel="home" href="/"><button>Home</button></a>
+	<a rel="about" href="/about/"><button>About</button></a>
+	<a rel="blog" href="/blog/"><button>Blog</button></a>
+</nav>
+</header>
+<hr>
+
+<main id="content">
+<div itemscope itemtype="https://schema.org/Article">
+<article>
+    <h2>Hexavalent: The "Desktop <a target="_blank" href="https://vanadium.app">Vanadium</a>"</h2>
+    <p>June - 6 December 2021</p>
+    <hr>
+        <section>
+        <p><strong>Browser security is hard.</strong> This has been proven endlessly; no matter what browser you like, and no matter the operating system you're on. Sprawling codebases of C and C++, making memory management extremely difficult. Rust support is very niche and isn't complete or fully usable. There aren't real privacy-respecting browsers either. Firefox, Chrome, Edge, etc don't have sane defaults. LibreWolf, Ungoogle Chromium, and Brave have very questionable, dubious, or improperly researched patches or "privacy features", some of these browsers severely lacking in security too. Lots of those "privacy features" only make your privacy worse and make you stick out like a sore-thumb.</p>
+
+        <p><a target="_blank" href="https://privacysandbox.com/">Privacy Sandbox</a> intends to solve a fair chunk of privacy problems with the modern web while retaining the usefulness of the previous features to marketers and other forms of data collection in a less invasive and concerning way; however that's a <a target="_blank" href="https://privacysandbox.com/timeline/">gradual process that will take years of research, testing and experimentation, and rolling out. It will be the beginning of 2023 by the time we are in the beginning stages of Privacy Sandbox adoption and transition</a>.</p>
+
+        <p>Why isn't there a proper browser out there for desktop users? On Android if you're running GrapheneOS, Vanadium is a very security-focused and privacy-aware hardened Chromium fork, while sharing some privacy patches from <a target="_blank" href="https://github.com/bromite/bromite">Bromite</a> that are carefully researched and have more saner defaults. <a target="_blank" href="https://github.com/bromite/bromite">Bromite</a> has great fingerprinting protections and other privacy patches, and includes some security patches from Vanadium. Some good upstream security features such as <a target="_blank" href="https://twitter.com/5aelo/status/1450862485070827533">V8 Ubercage</a> are highly experimental and cannot be yet mass-adopted due to performance regressions, crashes, and resource usage.</p>
+        </section>
+        
+        <section>
+        <p><strong><a target="_blank" href="https://hexavalent.org">Hexavalent</a> intends to change this.</strong> Hexavalent is an upcoming hardened, security-focused and privacy-aware Chromium browser with similar goals to GrapheneOS's Vanadium browser, led by <em><a target="_blank" href="https://github.com/qua3k">duck (qua3k)</a></em> and <em><a target="_blank" href="https://github.com/flawedworld">flawedworld</a></em>.</p>
+
+        <p>Hexavalent currently and will feature security hardening such as hardening Chromium's <a target="_blank" href="https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/allocator/partition_allocator/PartitionAlloc.md">PartitionAlloc</a> similar to GrapheneOS's <a target="_blank" href="https://github.com/GrapheneOS/hardened_malloc">hardened_malloc</a>, tightening Linux seccomp policies, enable usage of hardware-assisted shadow stacks like CET, forbid lots of dynamically generated code in as much areas as possible (e.g. renderer, browser, network, audio processes and more), implement a high-performance CSPRNG using ChaCha8 in places that require a CSRNG and even replacing usages of an insecure RNG while still retaining performance, hardening <a target="_blank" href="https://v8.dev/">V8 engine</a>, using Control Flow Guard (ideally XFG in the future) for CFI, tightening the Chromium sandbox, and much more.</p>
+
+        <p>Hexavalent will also feature some privacy features with the goal of blending in with the Chrome and Edge crowd, similar to what Vanadium does. For example, Client Hints will be Chrome's, Hexavalent will not leak .onion domains to resolvers making it usable for Tor, do not send X-Client-Data, replace Google Geolocation APIs with a local GeoIP database, use a local database for SafeBrowsing instead of fetching from Google using APIs, using proper adblocking and content filtering with standard Chromium functionality like Bromite, freeze User Agent, HTTP Cache Partitioning, mark insecure (HTTP) origins as dangerous instead of insecure including mixed content and forms, disable hyperlink auditing, and more. Some critical things such as component updates will still be fetched by Google until they're mirrored by Hexavalent or possibly from another trusted source like Vanadium.</p>
+        
+        <p>Hexavalent will take existing security measures, enhance and expand upon them instead of re-inventing the wheel, enumerating badness, or turning exploit mitigations into attack surface themselves. No massive lists of bad things, no blocking things, no unnecessary ideologies, just meaningful security and privacy. Upstream contributions will be made too!</p>
+        </section>
+
+        <section>
+        <p><strong>Check out the repository here:</strong> <a target="_blank" href="https://github.com/Hexavalent-Browser/Hexavalent">https://github.com/Hexavalent-Browser/Hexavalent</a></p>
+
+        <p>Check out qua3k's blog on Hexavalent: <a target="_blank" href="https://qua3k.github.io/hexavalent/">https://qua3k.github.io/hexavalent/</a></p>
+        
+        <h5>Places to keep up with development and news:</h5>
+        <ul>
+            <li>Matrix: <a target="_blank" href="https://app.element.io/#/room/#hexavalent:matrix.org">#hexavalent:matrix.org</a></li>
+            <li>Telegram: <a target="_blank" href="https://t.me/hexavalent">t.me/Hexavalent</a></li>
+            <li>Twitter: <a target="_blank" href="https://twitter.com/HexavalentWeb">@HexavalentWeb</a></li>
+        </ul>
+        </section>
+    </article>
+    </div>
+    </main>
+    <hr>
+    <footer id="site-footer">
+        <p>
+            © 2021 June | <a target="_blank" href="https://github.com/Zanthed/eridan.me">Website Source</a>
+        </p>
+        </footer>        
+</body>
