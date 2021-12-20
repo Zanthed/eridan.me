@@ -18,20 +18,9 @@ Problem is when people want to do a little more than play with their friends, or
 
 "But my server runs fine!" Yeah, packets don't travel that far if your server is on the same network as you are, or how little processing 4 players in the same chunk do. Or this article simply does not apply to you.
 
-Table of Contents
-Planning
-Hardware and Software
-Bandwidth and Networking
-How VPS's Work
-Software Threading
-Synchronous v. Asynchronous
-Relation to Java Minecraft
-Relation to VPS's
-"Need to buy more RAM!"
-Storage
-Multi-Socket Motherboards and NUMA
-Server Operating Systems and Hypervisors
-Planning
+{{< table_of_contents >}}
+
+## Planning
 You need to figure out who your target audience is. Are you running a simple Vanilla survival server for your friends? Or is it a public survival server that intends to be for everyone to play. Any mods? If so, Fabric or Forge? Or any plugins will be used? What is your target demographic location? Is it east coast? Or west coast? Or your entire country? Are they in the same state as you? Do you have IPv4 only? IPv6 only? Or both!
 
 Is this a simple LAN server? A public server? Is there a whitelist or not?
@@ -41,8 +30,8 @@ These questions are all pertinent that require answers to determine things like 
 
 For example, you may want to make a public survival server for not just your friends, but they may be the most active players on 80% of the time. Your friends are also in the same state as you. Self hosting may be an option with a higher security model in mind.
 
-Hardware and Software
-Bandwidth and Network
+## Hardware and Software
+### Bandwidth and Network
 Support IPv6. Please. It is absolutely not considered experimental and we are recycling IPv4 addresses which has shown adverse<sup>[i]</sup> affects<sup>[i]</sup> to servers. IPv6 supports IPSec and IPSec Encapsulating Security Payload (ESP), even when behind NATs. Modern versions of Minecraft support IPv6 just fine. (Laugh at the people who refuse to implement IPv6 or applaud anyone who has added support for IPv6.)
 
 Depending on who your target audience is, high bandwidth may not be necessary, but it is always desirable no matter the circumstances to have low latency. Latency is a far worse thing to play against than speed. Minecraft doesn't need a lot of bandwidth for a few players, but I personally suggest anything at least 200Mbps (upload).
@@ -56,15 +45,16 @@ From a performance standpoint, routers still fail horribly. Unless you use Broad
 In the Server Operating Systems and Hypervisors section, I talk about NIC bonding/teaming with schedulers like 802.3ad (link aggregation) and round-robin.
 
 The next few sections will talk about software threading and synchrony.
-How VPS's work
+
+### How VPS's work
 VPS's are shared hosting. It should be obvious you are not going to get a dedicated server with purely physical hardware just for you unless you purchase a dedicated server specifically. That's expensive for both the provider and you. To make room for everyone, providers give you shared resources through virtualisation and a (usually type 1) hypervisor; also usually Linux KVM and scripting QEMU or another KVM frontend, and UEFI being TianoCore EDK II. You have multiple people on one processor and even multiple people on the same physical core as you. Server load can determine how much power is available to you dynamically. If the servers are overloaded, your performance will suffer. If servers are not overloaded, you have more headroom.
 
-Software Threading
+### Software Threading
 Software executes code usually using both multi-threaded and single-threaded mechanisms. Threading is all about workers. Who is doing what? The term "thread" here is not how many cores your processor has. A thread is the stream of execution and execution context. Single-threading uses just one of those. It's how all functions are executed by default; call a function, does a thing, returns a thing. Simple.
 
 Multi-threaded software execute code using multiple execution contexts, or threads. You do a thing, do another thing, and another thing all at the same time. In some cases, this can be a bit risky, what is known as not thread-safe, if you are doing this to do more work like trying to render things and the drawing process was made to draw in a sequential manner.
 
-Synchronous v. Asynchronous
+### Synchronous v. Asynchronous
 Now in functions, you obviously do stuff in them. Since threading is a stream of execution, a program executes stuff in a sequential manner by default. This is where synchronous and asynchronous come in. Contrary to popular teaching: synchronous, asynchronous, single-threaded, and multi-threaded are NOT at all the same. Synchrony and asynchrony are all about tasks.
 
 Synchronous executes stuff in a specific sequence and a function is supposed to finish before doing the next thing. This is not the same as single-threaded because you can execute synchronous things with multiple threads. A common example is before HTTP/2, it was a synchronous request/reply system.
@@ -75,28 +65,28 @@ The real difficulty is when you do asynchronous multi-threading. You now have mu
 
 See these great Stackoverflow<sup>[i]</sup> answers on threading<sup>[i]</sup> and synchrony.
 
-Relation to Java Minecraft
+### Relation to Java Minecraft
 Before getting to the VPS part, let's wrap it up by explaining how this ties in with Java Minecraft.
 
 You're probably familiar with the infamous never-ending losing war of how terribly unoptimised chunk rendering and chunk generation is in Minecraft. There are plenty more examples, but these two have been problems since day-one. Minecraft heavily relies on single-threaded synchronous operations, being on the main thread. Even as of 1.17, Minecraft is still extremely single-threaded reliant even on chunk operations. There are some multi-threaded or asynchronous operations like disk I/O and Netty supporting multiple threads. But even then, async and multi-threading are not magic performance changers or black or white if there are many<sup>[i]</sup> other<sup>[i]</sup> problems<sup>[i]</sup>. Notch admits Java not being the fastest.
 
 It is so difficult to implement asynchronous execution on many things on Java Minecraft, that even PaperMC<sup>[i]</sup> developers<sup>[i]</sup> have made jokes about it or repeat themselves because it's not magic, black or white, or trivial<sup>[i]</sup> to implement<sup>[i]</sup>. Asynchronous tasks for Minecraft will forever be experimental, no matter how much people push for it and promote new "revelations in async technology". You need to focus on solving other problems with your setup instead of telling yourself async is a magic bullet. Plugins need to be async and thread-safe and thousands of lines of code in Minecraft need to be rewritten to be async and thread safe.
 
-Relation to VPS's
+### Relation to VPS's
 So, it's safe to say you need high single-core performance to compensate for the poor programming, and you definitely don't want a shared vCPU. Providers may offer what is known as "dedicated CPU usage" or just a dedicated CPU. You still have a virtual machine given to you, but you are given a dedicated CPU core(s) that are not shared. These are going to be your best bet for high core performance, even on multi-threaded operations for things like your operating system. No one else is on these cores, but you. For Minecraft, it's suggested at least 2 or 4 dedicated cores. They may cost a tad bit, but not as crazy as buying a full dedicated server.
 
-"Need to buy more RAM!"
-You're not wrong. Java Minecraft is extremely needy of memory, no matter what it is you are doing. Aikar, a PaperMC developer, stresses the importance of using 6-10GB of memory minimum, no matter how many players you have or what you're doing to give plenty of head room for the GC. Unfortunately, RAM has turned into a marketing term for Minecraft server hosting. Providers love stressing about how they have so much memory and charge at either too cheap prices or too high prices, and all still have poor quality because they miss more key things as I have mentioned before relating to processing power and load. Stay away from Minecraft server hosting providers, but you will definitely need a lot of memory here. Make sure you leave headroom memory for the operating system too, something people easily forget.
+### "Need to buy more RAM!"
+You're not wrong. Java Minecraft is extremely needy of memory, no matter what it is you are doing. Aikar, a PaperMC developer, stresses the importance of using 6-10GB of memory *minimum*, no matter how many players you have or what you're doing to give plenty of head room for the GC. Unfortunately, RAM has turned into a marketing term for Minecraft server hosting. Providers love stressing about how they have so much memory and charge at either too cheap prices or too high prices, and all still have poor quality because they miss more key things as I have mentioned before relating to processing power and load. Stay away from Minecraft server hosting providers, but you will definitely need a lot of memory here. Make sure you leave headroom memory for the operating system too, something people easily forget.
 
 Error correction code memory (ECC) DIMMs are hardware memory modules (DIMMs) that attempt to correct any memory errors that may occur, such as cosmic bit flipping or other non-deterministic sources of memory interference, especially on the cells. ECC can mitigate row hammer bitflips on the DIMMs as well. Because of how memory intensive Minecraft is and to avoid unexplainable weird errors that may be caused by it, try to consider it when possible as it's not<sup>[i]</sup> totally<sup>[i]</sup> far<sup>[i]</sup> fetched<sup>[i]</sup>.
 
-Storage
+### Storage
 Just buy NVMe. Please. Though SATA RAID 10 can provide improved performance and data integrity compared to typical SATA if you cannot get NVMe. Make sure you do not purchase DRAMless SSDs. They are not useless, but in a server environment their purpose is out of their league here. Especially as you start to fill up the SSD and the performance boggles down to even slower than 7200 RPM HDDs because lack of DRAM cache.
 
-Multi-Socket Motherboards and NUMA
+### Multi-Socket Motherboards and NUMA
 Multi-socket, typically dual-socket, motherboards are not black/white. They don't magically "team" together to do processing. Non-uniform memory access (NUMA) is used to achieve this. NUMA requires a fair bit of configuration and may be a learning curve for some people. Software needs to be NUMA aware (Java supports this with the -XX:+UseNUMA flag) and thread affinity is necessary for resource management and delegation to make the fullest extent of performance possible with multiple processors and keep latency low (some software can handle this itself by making it NUMA aware). If you do happen to understand NUMA very well and know how to set it all up correctly, it would definitely yield great results only on newer Java versions.
 
-Server Operating Systems and Hypervisors
+## Server Operating Systems and Hypervisors
 If you purchased a full dedicated server or have the hardware for, I suggest looking into Windows Server and Hyper-V with Arch Linux as the guest. Hyper-V features core scheduling<sup>[i]</sup> for SMT to decide on improved performance or stricter guest isolation, Generation 2<sup>[i]</sup> VMs support larger drives (GPT), safer disk images with VHDX (and higher performance!)<sup>[i]</sup>, safer and easier migration and backups, and less legacy code or hardware used<sup>[i]</sup>. SR-IOV compatible network adapters are natively supported by Hyper-V<sup>[i]</sup>.
 
 Avoid Virtualbox at all costs. It has very weak guest isolation due to the bloat/absurd amount of guest-host features<sup>[i]</sup>, a terrible security<sup>[i]</sup> track record<sup>[i]</sup>, poor security<sup>[i]</sup> researcher communication<sup>[i]</sup>, and is only a type-2 hypervisor.
