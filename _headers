@@ -12,5 +12,6 @@
 	X-Frame-Options: DENY
 	X-XSS-Protection: 0
 	Set-Cookie: __Host-preload=1; HttpOnly; Secure; SameSite=Lax; Path=/
-	Link: <https://eridan.me/static/style.css>; rel="preload"; as="style"; nopush; integrity="sha256-bCF3QR5uhl1dLKjpAniWxMewkvLR0/FvIxRQ7FlA1ys="
+	Set-Cookie: __Host-push=1; HttpOnly; Secure; SameSite=Lax; Path=/
+	Link: <https://eridan.me/main.min.css>; rel="preload"; as="style", <https://eridan.me/icon.webp>; rel="preload"; as="image"
 	X-DNS-Prefetch-Control: on
