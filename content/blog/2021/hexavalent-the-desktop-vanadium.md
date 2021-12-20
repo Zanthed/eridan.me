@@ -1,5 +1,5 @@
 ---
-title: "Hexavalent the Desktop Vanadium"
+title: "Hexavalent - The Desktop Vanadium"
 date: 2021-12-06T00:00:00-00:00
 draft: false
 summary: "An upcoming desktop Windows, Linux, and macOS internet browser, focused on security and privacy."

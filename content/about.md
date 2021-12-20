@@ -2,7 +2,7 @@
 title: "About Me!"
 date: 2021-12-20T00:00:00-00:00
 draft: false
-summary: "Post talking about who I am + my contact information"
+summary: "Post talking about who I am + my contact information."
 ---
 
 ## Who am I?
