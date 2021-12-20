@@ -1,0 +1,6 @@
+Contact: mailto:june@eridan.me
+Contact: mailto:zanthed@riseup.net
+Expires: 2022-03-20T23:00:00.000Z
+Preferred-Languages: en
+Canonical: https://eridan.me/.well-known/security.txt
+Canonical: https://eridan.me/security.txt

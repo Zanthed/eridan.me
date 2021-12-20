@@ -1,0 +1,21 @@
+baseURL = "https://eridan.me/"
+languageCode = "en-us"
+theme = "eridan.me-theme"
+title = "Hi! I'm June."
+
+[author]
+  name = "June"
+  url = "https://github.com/Zanthed"
+  username = "Zanthed"
+
+[markup]
+  [markup.tableOfContents]
+    endLevel = 6
+    ordered = false
+    startLevel = 2
+
+
+[params]
+  description = "I'm a blue teamer, security researcher, and annoyed system administrator. You most likely know me from GrapheneOS. I also love Homestuck."
+  listUrl = "/blog/"
+#  footer = "© 2021 June"

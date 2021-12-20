@@ -1,0 +1,3 @@
+[submodule "themes/eridan.me-theme"]
+	path = themes/eridan.me-theme
+	url = git@github.com:Zanthed/eridan.me-theme.git
