@@ -16,6 +16,5 @@ title = "Hi! I'm June."
 
 
 [params]
-  description = "I'm a blue teamer, security researcher, and annoyed system administrator. You most likely know me from GrapheneOS. I also love Homestuck."
+  description = "Place where I rant and talk."
   listUrl = "/blog/"
-#  footer = "© 2021 June"
