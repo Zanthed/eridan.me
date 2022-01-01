@@ -14,7 +14,6 @@ title = "Hi! I'm June."
     ordered = false
     startLevel = 2
 
-
 [params]
   description = "Place where I rant and talk."
   listUrl = "/blog/"
